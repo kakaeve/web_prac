@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>웹 소켓 예제</title>
+  <script src="./node_modules/socket.io-client/dist/socket.io.js"></script>
+</head>
+<body>
+    <textarea rows="20" cols="30" id="chat"></textarea><br>
+    <input type="text" id="user"><input type="button" value="msg submit" onclick="myOnClick()">
+<script>
+
+  var socket = io.connect('http://localhost:3000');
+
+  socket.on('recMsg',(data)=>{
+      console.log(data);
+      $('#chat').append(data);
+      //$('#chat').appen(data.comment);
+  });
+
+  let myOnClick = ()=>{
+      socket.emit("msg",{comment:$('#user').val()});
+      $('#user').val('');
+  }
+
+  
+
+  // error event handler
+  
+</script>
+</body>
+</html>

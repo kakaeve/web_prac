@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf8">
+        <title>나의 메모</title>
+    </head>
+    <body>
+        <h1>나의 메모</h1>
+        <br>
+        <form method="post" action="/process/complete">
+            <table>
+                <tr>
+                    <td><label>작성자</label></td>
+                    <td><input type="text" name="name"></td>
+                </tr>
+                <tr>
+                    <td><label>작성일시</label></td>
+                    <td><input type="datetime" name="datetime"></td>
+                </tr>
+                <tr>
+                    <td><label>내용</label></td>
+                    <td><input type="text" name="subject"></td>
+                </tr>
+                <tr>
+                    <td><input type="submit" value="저장" onclick="myOnclick_save()"></td>
+                    <td><input type="button" value="닫기" onclick="myOnclick_exit()"></td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>
