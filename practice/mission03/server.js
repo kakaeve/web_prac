@@ -43,7 +43,7 @@ let router = express.Router();
 router.route('/process/save').post(memo_uploads.array('memo',1),(req,res)=>{
     console.log('/process/save 호출됨');
     
-    fs.writeFile(req.)
+    fs.writeFile();
 
     try{
         let files = req.files;

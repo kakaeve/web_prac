@@ -1,0 +1,28 @@
+{
+  "name": "databaseexample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/node": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "errorhandler": "^1.5.1",
+    "express": "^4.17.1",
+    "express-error-handler": "^1.1.0",
+    "express-session": "^1.17.0",
+    "http": "0.0.0",
+    "mongodb": "^3.5.3",
+    "mongoose": "^5.8.12",
+    "nodemon": "^2.0.2",
+    "path": "^0.12.7",
+    "serve-static": "^1.14.1"
+  }
+}
