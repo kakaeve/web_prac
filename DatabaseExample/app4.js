@@ -74,16 +74,24 @@ let connectDB = ()=>{
         //스키마 정의
         UserSchema = mongoose.Schema({
             id: {type:String,required:true,unique:true},
-            name: {type:String,index:'hashed'},
             password: {type:String,required:true},
-            age: Number,
-            created_at: {type:Date,index:{unique:false,expire:'1d'}},
-            updated_at: Date
+            name: {type:String,index:'hashed'},
+            age: {type:Number,'default':-1},
+            created_at: {type:Date,index:{unique:false},'default':Date.now},
+            updated_at: {type:Date,index:{unique:false},'default':Date.now}
+        });
+
+        UserSchema.static('findById',(id,callback)=>{
+            return UserModel.find({id:id},callback);
+        });
+
+        UserSchema.static('findAll',(callback)=>{
+            return UserModel.find({},callback);
         });
         console.log('UserSchema 정의함.');
 
         //모델 정의
-        UserModel = mongoose.model("users",UserSchema);
+        UserModel = mongoose.model("users2",UserSchema);
         console.log('UserModel 정의함.');
     });
 
@@ -94,10 +102,38 @@ let connectDB = ()=>{
     });
 }
 
-//유저 아이디 비교 authUser 함수 생성
+//사용자 인증함수 : 아이디로 먼저찾고 비밀번호 비교
 let authUser = (database,id,password,callback)=>{
-    console.log('authUser 호출됨 : ' + id + ' , ' + password);
+    console.log('authUser 호출됨.');
     
+    //아이디 이용
+    UserModel.findById(id,(err,results)=>{
+        if(err){
+            callback(err,null);
+            return;
+        }
+
+        console.log('아이디 [%s]로 사용자 검색 결과 : ',id);
+        console.dir(results);
+
+        if(results.length>0){
+            console.log('아이디와 일치하는 사용자 찾음.');
+
+            if(results[0]._doc.password==password){
+                console.log('비밀번호 일치함');
+                callback(null,results);
+            }
+            else{
+                console.log('비밀번호 일치하지 않음');
+                callback(null,null);
+            }
+        }
+        else{
+            console.log('아이디와 일치하는 사용자를 찾지 못함.');
+            callback(null,null);
+        }
+    });
+
     //find()함수로 찾기 객체를 넘겨주면 찾음
     UserModel.find({"id":id,"password":password},(err,results)=>{
         if(err){
@@ -192,11 +228,10 @@ router.route('/process/adduser').post((req,res)=>{
         addUser(database,paramId,paramPassword,paramName,(err,result)=>{
             if(err) {throw err;}
 
-            if(result&&result.insertedCount>0){
+            if(result){
                 console.dir(result);
                 
                 res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-                
                 res.write('<h1>사용자 추가 성공</h1>');
                 res.end();
             }
@@ -206,6 +241,52 @@ router.route('/process/adduser').post((req,res)=>{
                 res.end();
             }
 
+        });
+    }
+    else{
+        res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+        res.write('<h1>데이터베이스 연결 실패</h1>');
+        res.end();
+    }
+});
+
+router.route('/process/listuser').post((req,res)=>{
+    console.log('/process/listuser 호출됨');
+
+    //findAll() 함수 이용
+    if(database){
+        UserModel.findAll((err,results)=>{
+            if(err){
+                console.log('사용자 리스트 조회 중 오류 발생 : ',err.stack);
+
+                res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+                res.write('<h2>사용자 리스트 조회 중 오류발생</h2>');
+                res.write('<p>'+err.stack+'</p>');
+                res.end();
+
+                return;
+            }
+            //결과 객체 있으면 리스트 전송
+            if(results){
+                console.dir(results);
+
+                res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+                res.write('<h2>사용자 리스트</h2>');
+                res.write('<div><ul>');
+
+                for(let i=0;i<results.length;i++){
+                    let curId = results[i]._doc.id;
+                    let curName = results[i]._doc.name;
+                    res.write( ' <li>#' + i + ' : ' + curId + ' , ' + curName + ' </li>');
+                }
+                res.write('</ul></div>');
+                res.end();
+            }
+            else{
+                res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+                res.write('<h2>사용자 리스트 조회 실패</h2>');
+                res.end();
+            }
         });
     }
     else{
