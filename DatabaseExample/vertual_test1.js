@@ -4,6 +4,9 @@
 const mongodb = require('mongodb');
 const mongoose = require('mongoose');
 
+//crypto 모듈
+const crypto = require('crypto');
+
 //디비 연결
 let database;
 let UserSchema;
@@ -69,7 +72,7 @@ let doTest = ()=>{
         console.log("사용자 데이터 추가함.");
         
         findAll();
-    });
+    }); 
 
     console.log("info 속성에 값 할당.");
     console.log('id: %s, name: %s',user.id,user.name);
